@@ -1,0 +1,35 @@
+<!doctype html><html lang="en-IN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search Tools | FormTools</title>
+<meta name="description" content="Find the right FormTools utility.">
+<link rel="canonical" href="https://formtools.in/search/">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Search Tools | FormTools">
+<meta property="og:description" content="Find the right FormTools utility.">
+<meta property="og:url" content="https://formtools.in/search/">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/style.css">
+</head><body><header class="site-header"><div class="container header-inner">
+<a class="logo" href="/">Form<span>Tools</span></a>
+<nav class="nav" aria-label="Primary">
+<a href="/#popular">Popular</a><a href="/image-tools/">Image</a><a href="/pdf-tools/">PDF</a>
+<a href="/government/">Government</a><a href="/cybercafe/">Cyber Cafe</a>
+</nav></div></header>
+<main><section class="hero"><div class="container"><div class="kicker">FORMTOOLS SEARCH</div><h1>Find a tool</h1><form class="searchbar" action="/search/" method="get"><input id="q" name="q" placeholder="Search tools…" aria-label="Search tools"><button class="btn">Search</button></form><p id="result" class="lead"></p></div></section></main><footer class="footer"><div class="container footer-grid">
+<div><h4>FormTools</h4><p>Fast online tools for images, PDFs, signatures, applications and document workflows.</p></div>
+<div><h4>Tools</h4><a href="/image-tools/">Image Tools</a><a href="/pdf-tools/">PDF Tools</a><a href="/signature/">Signature Tools</a></div>
+<div><h4>Applications</h4><a href="/rrb/">RRB</a><a href="/ssc/">SSC</a><a href="/upsc/">UPSC</a><a href="/bpsc/">BPSC</a></div>
+<div><h4>Cyber Cafe</h4><a href="/cybercafe/">Cyber Cafe Toolkit</a><a href="/cybercafe/photo-print/">Photo Print</a><a href="/cybercafe/document-scan/">Document Scan</a></div>
+</div></footer>
+<script>
+const params=new URLSearchParams(location.search),q=(params.get("q")||"").toLowerCase();
+const map=[
+["compress image 50kb","/compress-image-to-50kb/"],["compress jpg 50kb","/compress-jpg-to-50kb/"],["image under 50kb","/image-under-50kb/"],
+["140x60 signature","/140x60-signature/"],["image compressor","/image-compressor/"],["image resizer","/image-resizer/"],
+["pdf compressor","/pdf-compressor/"],["merge pdf","/merge-pdf/"],["jpg to pdf","/jpg-to-pdf/"],["rrb je photo","/rrb/je-photo-resizer/"],
+["rrb je signature","/rrb/je-signature-resizer/"],["cyber cafe","/cybercafe/"],["photo print","/cybercafe/photo-print/"]
+];
+const hit=map.find(x=>x[0]===q)||map.find(x=>x[0].includes(q)||q.includes(x[0]));
+if(hit&&q) location.replace(hit[1]); else if(q) document.getElementById("result").textContent="No exact starter match yet. The search index will grow as new tools are added.";
+</script></body></html>
