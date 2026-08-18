@@ -1,0 +1,9 @@
+{
+  "name": "FormTools",
+  "short_name": "FormTools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f9fc",
+  "theme_color": "#175cd3",
+  "description": "Online image, PDF, signature and application tools."
+}
