@@ -1,35 +1,53 @@
-<!doctype html><html lang="en-IN"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+
+<html lang="en-IN"><head><meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Search Tools | FormTools</title>
-<meta name="description" content="Find the right FormTools utility.">
-<link rel="canonical" href="https://formtools.in/search/">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Search Tools | FormTools">
-<meta property="og:description" content="Find the right FormTools utility.">
-<meta property="og:url" content="https://formtools.in/search/">
-<meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="/assets/style.css">
-</head><body><header class="site-header"><div class="container header-inner">
+<meta content="Find the right FormTools utility." name="description"/>
+<link href="https://formtools.in/search/" rel="canonical"/>
+<meta content="noindex,follow" name="robots"/>
+<meta content="website" property="og:type"/>
+<meta content="Search Tools | FormTools" property="og:title"/>
+<meta content="Free browser-based online tools from FormTools." property="og:description"/>
+<meta content="https://formtools.in/search/" property="og:url"/>
+<meta content="summary" name="twitter:card"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link crossorigin="" href="https://cdn.jsdelivr.net" rel="preconnect"/><link crossorigin="" href="https://cdnjs.cloudflare.com" rel="preconnect"/><link href="https://unpkg.com" rel="dns-prefetch"/><link href="https://huggingface.co" rel="dns-prefetch"/></head><body><header class="site-header"><div class="container header-inner">
 <a class="logo" href="/">Form<span>Tools</span></a>
-<nav class="nav" aria-label="Primary">
+<nav aria-label="Primary" class="nav">
 <a href="/#popular">Popular</a><a href="/image-tools/">Image</a><a href="/pdf-tools/">PDF</a>
 <a href="/government/">Government</a><a href="/cybercafe/">Cyber Cafe</a>
 </nav></div></header>
-<main><section class="hero"><div class="container"><div class="kicker">FORMTOOLS SEARCH</div><h1>Find a tool</h1><form class="searchbar" action="/search/" method="get"><input id="q" name="q" placeholder="Search tools…" aria-label="Search tools"><button class="btn">Search</button></form><p id="result" class="lead"></p></div></section></main><footer class="footer"><div class="container footer-grid">
+<main><section class="hero"><div class="container"><div class="kicker">FORMTOOLS SEARCH</div><h1>Find a tool</h1><form action="/search/" class="searchbar" method="get"><input aria-label="Search tools" id="q" name="q" placeholder="Search tools…"/><button class="btn">Search</button></form><p class="lead" id="result"></p></div></section></main><footer class="footer"><div class="container footer-grid">
 <div><h4>FormTools</h4><p>Fast online tools for images, PDFs, signatures, applications and document workflows.</p></div>
 <div><h4>Tools</h4><a href="/image-tools/">Image Tools</a><a href="/pdf-tools/">PDF Tools</a><a href="/signature/">Signature Tools</a></div>
 <div><h4>Applications</h4><a href="/rrb/">RRB</a><a href="/ssc/">SSC</a><a href="/upsc/">UPSC</a><a href="/bpsc/">BPSC</a></div>
 <div><h4>Cyber Cafe</h4><a href="/cybercafe/">Cyber Cafe Toolkit</a><a href="/cybercafe/photo-print/">Photo Print</a><a href="/cybercafe/document-scan/">Document Scan</a></div>
-</div></footer>
+<a href="/privacy-policy/">Privacy</a><span> • </span><a href="/terms/">Terms</a><span> • </span><a href="/contact/">Contact</a></div></footer>
 <script>
-const params=new URLSearchParams(location.search),q=(params.get("q")||"").toLowerCase();
-const map=[
-["compress image 50kb","/compress-image-to-50kb/"],["compress jpg 50kb","/compress-jpg-to-50kb/"],["image under 50kb","/image-under-50kb/"],
-["140x60 signature","/140x60-signature/"],["image compressor","/image-compressor/"],["image resizer","/image-resizer/"],
-["pdf compressor","/pdf-compressor/"],["merge pdf","/merge-pdf/"],["jpg to pdf","/jpg-to-pdf/"],["rrb je photo","/rrb/je-photo-resizer/"],
-["rrb je signature","/rrb/je-signature-resizer/"],["cyber cafe","/cybercafe/"],["photo print","/cybercafe/photo-print/"]
+const params=new URLSearchParams(location.search),q=(params.get("q")||"").trim().toLowerCase();
+const tools=[
+["compress image to 20kb","/compress-image-to-20kb/"],["compress image to 50kb","/compress-image-to-50kb/"],["compress image to 100kb","/compress-image-to-100kb/"],
+["compress jpg to 20kb","/compress-jpg-to-20kb/"],["compress jpg to 50kb","/compress-jpg-to-50kb/"],["compress jpg to 100kb","/compress-jpg-to-100kb/"],
+["image under 20kb","/image-under-20kb/"],["image under 50kb","/image-under-50kb/"],["image under 100kb","/image-under-100kb/"],
+["image compressor","/image-compressor/"],["image resizer","/image-resizer/"],["passport photo","/passport-photo-maker/"],["passport photo maker","/passport-photo-maker/"],
+["signature resizer","/signature-resizer/"],["140x60 signature","/140x60-signature/"],["background remover","/background-remover/"],["remove background","/background-remover/"],
+["jpg to pdf","/jpg-to-pdf/"],["image to pdf","/jpg-to-pdf/"],["merge pdf","/merge-pdf/"],["split pdf","/split-pdf/"],["rotate pdf","/rotate-pdf/"],
+["pdf to jpg","/pdf-to-jpg/"],["pdf to image","/pdf-to-jpg/"],["pdf to text","/pdf-to-text/"],["pdf compressor","/pdf-compressor/"],["compress pdf","/pdf-compressor/"],
+["pdf editor","/pdf-editor/"],["image to text","/image-to-text/"],["ocr","/image-to-text/"],["qr generator","/cybercafe/qr-generator/"],["barcode generator","/cybercafe/barcode-generator/"],
+["photo print","/cybercafe/photo-print/"],["document scan","/cybercafe/document-scan/"],["cyber cafe","/cybercafe/"],["typing test","/cybercafe/typing/"],
+["rrb je photo","/rrb/je-photo-resizer/"],["rrb je signature","/rrb/je-signature-resizer/"]
 ];
-const hit=map.find(x=>x[0]===q)||map.find(x=>x[0].includes(q)||q.includes(x[0]));
-if(hit&&q) location.replace(hit[1]); else if(q) document.getElementById("result").textContent="No exact starter match yet. The search index will grow as new tools are added.";
-</script></body></html>
+function norm(x){return x.replace(/[^a-z0-9]+/g," ").trim()}
+if(q){
+ const nq=norm(q);
+ let hit=tools.find(x=>norm(x[0])===nq)||tools.find(x=>norm(x[0]).includes(nq)||nq.includes(norm(x[0])));
+ if(hit) location.replace(hit[1]);
+ else {
+   const matches=tools.filter(x=>norm(x[0]).split(" ").some(t=>nq.split(" ").includes(t))).slice(0,6);
+   document.getElementById("result").innerHTML=matches.length
+     ? "Related tools: "+matches.map(x=>`<a href="${x[1]}">${x[0]}</a>`).join(" • ")
+     : "No exact match yet. Try terms like “compress image 50kb”, “merge pdf”, or “background remover”.";
+ }
+}
+</script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}</script></body></html>

@@ -1,0 +1,18 @@
+FORMTOOLS FINAL BUILD
+
+Upload the CONTENTS of this folder to the root of your GitHub repository (not the outer folder itself).
+Keep the same directory structure.
+After GitHub commit, Cloudflare will deploy from the connected repository.
+
+Live checks after deploy:
+https://formtools.in/
+https://formtools.in/compress-image-to-20kb/
+https://formtools.in/compress-image-to-50kb/
+https://formtools.in/compress-image-to-100kb/
+https://formtools.in/compress-jpg-to-100kb/
+https://formtools.in/background-remover/
+https://formtools.in/merge-pdf/
+https://formtools.in/pdf-editor/
+https://formtools.in/cybercafe/
+
+Important: browser-side tools may load third-party JS/model assets from public CDNs on first use.

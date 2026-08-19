@@ -2,7 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://formtools.in/</loc></url>
   <url><loc>https://formtools.in/140x60-signature/</loc></url>
-  <url><loc>https://formtools.in/ai/</loc></url>
+  <url><loc>https://formtools.in/about/</loc></url>
+  <url><loc>https://formtools.in/background-remover/</loc></url>
   <url><loc>https://formtools.in/bpsc/</loc></url>
   <url><loc>https://formtools.in/compress-image-to-100kb/</loc></url>
   <url><loc>https://formtools.in/compress-image-to-20kb/</loc></url>
@@ -10,6 +11,8 @@
   <url><loc>https://formtools.in/compress-jpg-to-100kb/</loc></url>
   <url><loc>https://formtools.in/compress-jpg-to-20kb/</loc></url>
   <url><loc>https://formtools.in/compress-jpg-to-50kb/</loc></url>
+  <url><loc>https://formtools.in/contact/</loc></url>
+  <url><loc>https://formtools.in/cookie-policy/</loc></url>
   <url><loc>https://formtools.in/cybercafe/</loc></url>
   <url><loc>https://formtools.in/cybercafe/barcode-generator/</loc></url>
   <url><loc>https://formtools.in/cybercafe/document-scan/</loc></url>
@@ -20,6 +23,8 @@
   <url><loc>https://formtools.in/cybercafe/qr-generator/</loc></url>
   <url><loc>https://formtools.in/cybercafe/typing/</loc></url>
   <url><loc>https://formtools.in/cybercafe/zip-extractor/</loc></url>
+  <url><loc>https://formtools.in/disclaimer/</loc></url>
+  <url><loc>https://formtools.in/dmca/</loc></url>
   <url><loc>https://formtools.in/government/</loc></url>
   <url><loc>https://formtools.in/image-compressor/</loc></url>
   <url><loc>https://formtools.in/image-resizer/</loc></url>
@@ -36,18 +41,20 @@
   <url><loc>https://formtools.in/pdf-to-jpg/</loc></url>
   <url><loc>https://formtools.in/pdf-to-text/</loc></url>
   <url><loc>https://formtools.in/pdf-tools/</loc></url>
+  <url><loc>https://formtools.in/privacy-policy/</loc></url>
+  <url><loc>https://formtools.in/rotate-pdf/</loc></url>
   <url><loc>https://formtools.in/rrb/</loc></url>
   <url><loc>https://formtools.in/rrb/je-photo-resizer/</loc></url>
   <url><loc>https://formtools.in/rrb/je-signature-resizer/</loc></url>
   <url><loc>https://formtools.in/rrb/ntpc-photo-resizer/</loc></url>
   <url><loc>https://formtools.in/rrb/ntpc-signature-resizer/</loc></url>
-  <url><loc>https://formtools.in/search/</loc></url>
   <url><loc>https://formtools.in/signature-resizer/</loc></url>
   <url><loc>https://formtools.in/signature/</loc></url>
   <url><loc>https://formtools.in/split-pdf/</loc></url>
   <url><loc>https://formtools.in/ssc/</loc></url>
   <url><loc>https://formtools.in/ssc/cgl-photo-resizer/</loc></url>
   <url><loc>https://formtools.in/ssc/cgl-signature-resizer/</loc></url>
+  <url><loc>https://formtools.in/terms/</loc></url>
   <url><loc>https://formtools.in/tools/</loc></url>
   <url><loc>https://formtools.in/upsc/</loc></url>
 </urlset>
