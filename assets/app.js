@@ -21,6 +21,7 @@ async function loadFiles(list){
   revokeAll();
   selectedFiles=[...list].filter(f=>f.type.startsWith("image/"));
   const preview=$("#preview"); if(preview)preview.innerHTML="";
+  const uploadDetails=$("#uploadDetails"); if(uploadDetails)uploadDetails.innerHTML="";
   if(!selectedFiles.length)return setStatus("Please choose an image file.","err");
   for(const file of selectedFiles.slice(0,20)){
     const wrap=document.createElement("div"); wrap.className="preview-item";
@@ -28,7 +29,9 @@ async function loadFiles(list){
     const u=URL.createObjectURL(file); objectUrls.add(u); img.src=u;
     const cap=document.createElement("small"); cap.textContent=`${file.name} • ${(file.size/1024).toFixed(1)} KB`;
     wrap.append(img,cap); preview?.appendChild(wrap);
-    if(file===selectedFiles[0]){try{const im=await loadImage(file);sourceAspect=im.naturalWidth/im.naturalHeight;setInitialDimensions(im)}catch{}}
+    if(file===selectedFiles[0]){try{const im=await loadImage(file);sourceAspect=im.naturalWidth/im.naturalHeight;setInitialDimensions(im);
+      const d=$("#uploadDetails");if(d)d.innerHTML=`<div class="upload-detail-card"><div><b>Uploaded image</b><br>${file.name}</div><div><b>Type</b><br>${file.type||"Image"}</div><div><b>Dimensions</b><br>${im.naturalWidth} × ${im.naturalHeight} px</div><div><b>File size</b><br>${(file.size/1024).toFixed(1)} KB (${file.size.toLocaleString()} bytes)</div><div><b>Aspect ratio</b><br>${(im.naturalWidth/im.naturalHeight).toFixed(3)}</div><div><b>Upload status</b><br>✓ Ready — processing stays in your browser</div></div>`; 
+    }catch{}}
   }
   setStatus(`${selectedFiles.length} image(s) selected. Processing stays in your browser.`);
 }
@@ -82,7 +85,7 @@ function injectAdvancedControls(){
     <div class="field"><label for="dpi">DPI</label><select id="dpi"><option>72</option><option selected>96</option><option>150</option><option>200</option><option>300</option><option>600</option><option value="custom">Custom</option></select></div>
     <div class="field" id="customDpiWrap" hidden><label for="customDpi">Custom DPI</label><input id="customDpi" min="1" type="number" value="300"></div>
     <div class="field check"><label><input id="aspect" type="checkbox" checked> Maintain aspect ratio</label></div>
-    <div class="field"><label for="crop">Crop before resize</label><select id="crop"><option value="none">No crop</option><option value="1:1">1:1 Square</option><option value="4:3">4:3</option><option value="3:2">3:2</option><option value="16:9">16:9</option><option value="9:16">9:16</option></select></div>
+    <div class="field"><label for="crop">Crop before resize</label><select id="crop"><option value="none">No crop</option><option value="1:1">1:1 Square</option><option value="4:3">4:3</option><option value="3:2">3:2</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="manual">✂ Manual crop…</option></select></div>
     <div class="field"><label for="rotate">Rotate</label><select id="rotate"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></div>
     <div class="field"><label for="flip">Flip</label><select id="flip"><option value="none">None</option><option value="h">Horizontal</option><option value="v">Vertical</option><option value="both">Horizontal + Vertical</option></select></div>
     <div class="field"><label for="format">Output format</label><select id="format"><option value="image/jpeg">JPG / JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div>
@@ -95,6 +98,7 @@ function injectAdvancedControls(){
   $("#dpi")?.addEventListener("change",()=>$("#customDpiWrap").hidden=$("#dpi").value!=="custom");
   $("#targetKB")?.addEventListener("change",()=>$("#customKBWrap").hidden=$("#targetKB").value!=="custom");
   $("#quality")?.addEventListener("input",e=>$("#qualityValue").textContent=e.target.value);
+  $("#crop")?.addEventListener("change",e=>{if(e.target.value==="manual"){openManualCrop();}});
   $("#aspect")?.addEventListener("change",()=>{if($("#aspect").checked)syncAspect("width")});
   $("#width")?.addEventListener("input",()=>syncAspect("width"));
   $("#height")?.addEventListener("input",()=>syncAspect("height"));
@@ -102,7 +106,7 @@ function injectAdvancedControls(){
 }
 function loadImage(file){return new Promise((resolve,reject)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(u);resolve(img)};img.onerror=e=>{URL.revokeObjectURL(u);reject(e)};img.src=u})}
 function cropRect(sw,sh,mode){
-  if(!mode||mode==="none")return{x:0,y:0,w:sw,h:sh};
+  if(!mode||mode==="none"||mode==="manual")return{x:0,y:0,w:sw,h:sh};
   const [a,b]=mode.split(":").map(Number); if(!a||!b)return{x:0,y:0,w:sw,h:sh};
   const ratio=a/b; let w=sw,h=sh;
   if(sw/sh>ratio)w=sh*ratio;else h=sw/ratio;
@@ -110,6 +114,7 @@ function cropRect(sw,sh,mode){
 }
 async function canvasFor(file,width,height,opts={}){
   const img=await loadImage(file); let crop=cropRect(img.naturalWidth,img.naturalHeight,opts.crop||"none");
+  if(window.__manualCrop&&window.__manualCropDisplay?.w){const m=window.__manualCrop,d=window.__manualCropDisplay;crop={x:m.x/d.w*img.naturalWidth,y:m.y/d.h*img.naturalHeight,w:m.w/d.w*img.naturalWidth,h:m.h/d.h*img.naturalHeight}}
   let w=width,h=height;
   if(!w&&!h){w=crop.w;h=crop.h}else if(w&&!h)h=Math.round(crop.h*w/crop.w);else if(h&&!w)w=Math.round(crop.w*h/crop.h);
   w=Math.max(1,Math.round(w));h=Math.max(1,Math.round(h));
@@ -140,6 +145,10 @@ async function addDpiMetadata(blob,dpi,mime){
   return blob;
 }
 function targetKB(){const v=$("#targetKB")?.value||"";return v==="custom"?Math.max(1,Number($("#customKB")?.value)||100):(v?Number(v):null)}
+let manualCropRect=null,cropDrag=null;
+function openManualCrop(){if(!selectedFiles.length)return setStatus("Upload an image before manual cropping.","err");const m=$("#cropModal"),im=$("#cropImage"),sel=$("#cropSelection");const u=URL.createObjectURL(selectedFiles[0]);im.onload=()=>{URL.revokeObjectURL(u);m.hidden=false;manualCropRect=null;sel.hidden=true};im.src=u}
+function setupManualCrop(){const b=$("#manualCropBtn"),m=$("#cropModal"),cl=$("#cropClose"),rs=$("#cropReset"),ap=$("#cropApply"),st=$("#cropStage"),im=$("#cropImage"),sel=$("#cropSelection");if(!b||!st)return;b.onclick=openManualCrop;cl.onclick=()=>m.hidden=true;rs.onclick=()=>{manualCropRect=null;sel.hidden=true};st.onpointerdown=e=>{if(e.target!==im&&e.target!==sel)return;const r=im.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;cropDrag={sx:x,sy:y,ex:x,ey:y};manualCropRect={x,y,w:1,h:1};sel.hidden=false;drawCropSelection();st.setPointerCapture?.(e.pointerId)};st.onpointermove=e=>{if(!cropDrag)return;const r=im.getBoundingClientRect();cropDrag.ex=Math.max(0,Math.min(r.width,e.clientX-r.left));cropDrag.ey=Math.max(0,Math.min(r.height,e.clientY-r.top));manualCropRect={x:Math.min(cropDrag.sx,cropDrag.ex),y:Math.min(cropDrag.sy,cropDrag.ey),w:Math.abs(cropDrag.ex-cropDrag.sx),h:Math.abs(cropDrag.ey-cropDrag.sy)};drawCropSelection()};st.onpointerup=()=>cropDrag=null;ap.onclick=()=>{if(!manualCropRect||manualCropRect.w<3||manualCropRect.h<3)return setStatus("Drag over the image to select a crop area.","err");window.__manualCrop=manualCropRect;window.__manualCropDisplay={w:im.clientWidth,h:im.clientHeight};$("#crop").value="manual";m.hidden=true;setStatus("Manual crop applied. Run the tool to process it.","ok")}}
+function drawCropSelection(){const s=$("#cropSelection");if(!s||!manualCropRect)return;s.hidden=false;s.style.left=manualCropRect.x+"px";s.style.top=manualCropRect.y+"px";s.style.width=manualCropRect.w+"px";s.style.height=manualCropRect.h+"px"}
 function options(){
   const unit=$("#unit")?.value||"px",dpi=getDpi();
   return {width:unitToPx(Number($("#width")?.value)||0,unit,dpi),height:unitToPx(Number($("#height")?.value)||0,unit,dpi),dpi,aspect:$("#aspect")?.checked!==false,crop:$("#crop")?.value||"none",rotate:Number($("#rotate")?.value||0),flip:$("#flip")?.value||"none",mime:$("#format")?.value||"image/jpeg",quality:Number($("#quality")?.value||90)/100,targetKB:targetKB()};
@@ -177,6 +186,10 @@ function relatedTools(){
   const parent=box.parentElement;const layout=document.createElement("div");layout.className="tool-layout";parent.insertBefore(layout,box);layout.appendChild(box);
   const aside=document.createElement("aside");aside.className="related-tools card";aside.innerHTML=`<h2>Related Image Tools</h2><p>More browser-based tools you may need.</p><nav>${links.map(([u,t])=>`<a href="${u}">${t}</a>`).join("")}</nav>`;layout.appendChild(aside);
 }
+function showComparison(originals,items){const p=$("#comparison");if(!p)return;p.innerHTML="";originals.forEach((f,i)=>{const o=items[i],c=document.createElement("article");c.className="compare-card";const g=document.createElement("div");g.className="compare-grid";const a=document.createElement("div"),b=document.createElement("div"),ai=document.createElement("img"),bi=document.createElement("img");ai.src=URL.createObjectURL(f);bi.src=URL.createObjectURL(o.blob);ai.alt="Original image";bi.alt="Processed image";a.innerHTML="<strong>Before</strong>";a.append(ai);b.innerHTML="<strong>After</strong>";b.append(bi);g.append(a,b);const info=document.createElement("div");info.className="compare-info";const saved=Math.max(0,(1-o.blob.size/f.size)*100);info.innerHTML=`<div><b>Original</b><br>${f.name}<br>${(f.size/1024).toFixed(1)} KB</div><div><b>Output</b><br>${o.name}<br>${(o.blob.size/1024).toFixed(1)} KB</div><div><b>Change</b><br>${saved.toFixed(1)}% smaller</div>`;c.append(g,info);p.append(c)})}
+async function showComparison(originals,items){const p=$("#comparison");if(!p)return;p.innerHTML="";for(let i=0;i<originals.length;i++){const f=originals[i],o=items[i],im=await loadImage(o.blob),c=document.createElement("article");c.className="compare-card";const g=document.createElement("div");g.className="compare-grid";const a=document.createElement("div"),b=document.createElement("div"),ai=document.createElement("img"),bi=document.createElement("img");ai.src=URL.createObjectURL(f);bi.src=URL.createObjectURL(o.blob);ai.alt="Original image before editing";bi.alt="Processed image after editing";a.innerHTML="<strong>Original Image (Before)</strong>";a.append(ai);b.innerHTML="<strong>Processed Image (After)</strong>";b.append(bi);g.append(a,b);const saved=Math.max(0,(1-o.blob.size/f.size)*100);const info=document.createElement("div");info.className="compare-info";info.innerHTML=`<div><b>Original</b><br>File: ${f.name}<br>Type: ${f.type||"Image"}<br>Dimensions: ${await imageDimensions(f)}<br>File size: ${(f.size/1024).toFixed(1)} KB (${f.size.toLocaleString()} bytes)<br>Aspect ratio: ${(await imageRatio(f)).toFixed(3)}</div><div><b>After editing</b><br>File: ${o.name}<br>Type: ${o.blob.type||"Image"}<br>Dimensions: ${im.naturalWidth} × ${im.naturalHeight} px<br>File size: ${(o.blob.size/1024).toFixed(1)} KB (${o.blob.size.toLocaleString()} bytes)<br>Aspect ratio: ${(im.naturalWidth/im.naturalHeight).toFixed(3)}</div><div><b>Result</b><br>${saved.toFixed(1)}% smaller<br>Quality: ${$("#quality")?.value||"—"}%<br>DPI: ${getDpi()}<br>Target: ${$("#targetKB")?.value&&$("#targetKB").value!=="custom"?$("#targetKB").value+" KB":"Custom / none"}</div>`;c.append(g,info);p.append(c)}}
+async function imageDimensions(f){const im=await loadImage(f);return `${im.naturalWidth} × ${im.naturalHeight} px`}
+async function imageRatio(f){const im=await loadImage(f);return im.naturalWidth/im.naturalHeight}
 async function processImages(){
   if(!selectedFiles.length)return setStatus("Please upload at least one image first.","err");
   const o=options(),p=location.pathname.toLowerCase();let target=o.targetKB;
@@ -197,4 +210,4 @@ async function processImages(){
   }
   await downloadMany(items);setStatus(`Done • ${items.length} image(s) processed. Download started.` ,"ok");
 }
-document.addEventListener("DOMContentLoaded",()=>{injectAdvancedControls();setupUploader();relatedTools();$("#processBtn")?.addEventListener("click",processImages)});
+document.addEventListener("DOMContentLoaded",()=>{injectAdvancedControls();setupUploader();setupManualCrop();relatedTools();$("#processBtn")?.addEventListener("click",processImages)});

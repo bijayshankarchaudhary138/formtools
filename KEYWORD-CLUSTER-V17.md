@@ -1,0 +1,1 @@
+V17 adds direct target-size image and PDF landing pages based on current PI7 target clusters, plus range pages and a central compression hub. Exact byte output is reported honestly and is not falsely guaranteed for every source file.
