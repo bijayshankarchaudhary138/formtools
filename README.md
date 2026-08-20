@@ -1,3 +1,7 @@
+# FormTools V4
+
+This build contains the advanced browser image/PDF tools, related-tool navigation, SEO help sections, background-remover stability improvements, sitemap refresh, service-worker cache refresh and deployable security headers.
+
 # FormTools.in — Browser-first production build
 
 FormTools is a static/browser-first toolkit for images, PDFs, OCR and cyber-café utilities.
