@@ -1,0 +1,14 @@
+{
+  "version": "V26",
+  "focus": [
+    "passport UX",
+    "smart KB",
+    "mobile UX",
+    "validation",
+    "production QA"
+  ],
+  "assets": [
+    "assets/v26/production-ux.css",
+    "assets/v26/production-ux.js"
+  ]
+}

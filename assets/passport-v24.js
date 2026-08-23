@@ -1,8 +1,8 @@
 (()=>{
 "use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let file=null,img=null,removed=null,bg='original',result=null,frame={x:50,y:50,w:62,h:72},zoom=1;
-const presets=[['india','India 35×45','mm',35,45],['usa','USA 2×2″','in',2,2],['canada','Canada 50×70','mm',50,70],['ind34','Indonesia 3×4','cm',3,4],['ind46','Indonesia 4×6','cm',4,6],['china','China 33×48','mm',33,48],['custom','Custom','mm',35,45]];
+let file=null,img=null,removed=null,removedImg=null,bg='original',result=null,frame={x:50,y:50,w:62,h:72},zoom=1;
+const presets=[['india','India 35×45','mm',35,45],['usa','USA 2×2″','in',2,2],['uk','UK 35×45','mm',35,45],['canada','Canada 50×70','mm',50,70],['australia','Australia 35×45','mm',35,45],['schengen','Schengen/EU 35×45','mm',35,45],['china','China Visa 33×48','mm',33,48],['philippines','Philippines 2×2″','in',2,2],['malaysia','Malaysia 35×50','mm',35,50],['ind34','Indonesia 3×4','cm',3,4],['ind46','Indonesia 4×6','cm',4,6],['pakistan','Pakistan 35×45','mm',35,45],['nigeria','Nigeria 35×45','mm',35,45],['uae','UAE 43×55','mm',43,55],['vietnam','Vietnam 4×6','cm',4,6],['nepal','Nepal 35×45','mm',35,45],['bangladesh','Bangladesh 35×45','mm',35,45],['custom','Custom','mm',35,45]];
 const colors={white:'#fff',offwhite:'#f5f5f5',blue:'#dbeafe',red:'#ef4444'};
 const fmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB';
 const px=(v,u,d)=>u==='px'?Math.round(v):Math.max(1,Math.round(u==='cm'?v*d/2.54:u==='mm'?v*d/25.4:v*d));
@@ -11,7 +11,7 @@ function setStatus(t,ok=false){const e=$('#status');if(e){e.textContent=t;e.clas
 function setBgStatus(t,err=false){const e=$('#bgStatus');if(e){e.textContent=t;e.className=err?'err':'muted'}}
 function ratio(){return Math.max(.01,+$('#w').value)/Math.max(.01,+$('#h').value)}
 function pick(f){
-  file=f; removed=null; bg='original';
+  file=f; removed=null; removedImg=null; bg='original';
   load(f).then(i=>{
     img=i;
     $('#uploadMeta').innerHTML=`<b>${f.name}</b> · ${fmt(f.size)} · ${i.naturalWidth} × ${i.naturalHeight}px`;
@@ -52,15 +52,33 @@ function setupCrop(){
  f.addEventListener('mousedown',down);f.addEventListener('touchstart',down,{passive:false});window.addEventListener('mousemove',move);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('mouseup',up);window.addEventListener('touchend',up);
 }
 function renderBg(){if(!file)return;const u=URL.createObjectURL(file);$('#bgOriginal').src=u;$('#bgWhite').src=u;$('#bgOffwhite').src=u;$('#bgBlue').src=u;$('#bgRed').src=u;$('#bgTransparent').src=u}
+async function downscaleForAI(f,maxSide=1600){
+ const im=await load(f);
+ if(Math.max(im.naturalWidth,im.naturalHeight)<=maxSide)return f;
+ const scale=maxSide/Math.max(im.naturalWidth,im.naturalHeight);
+ const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);
+ c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+ return new Promise(r=>c.toBlob(b=>r(b||f),'image/jpeg',.92));
+}
 async function runAI(){
  if(!file)throw Error('Upload a photo first.'); if(removed)return removed;
- setBgStatus('Loading AI background remover… first use may take longer.');
+ setBgStatus('Preparing image…');
  try{
+   const small=await downscaleForAI(file);
+   const mode=$('#bgQuality')?.value||'fast';
+   const model=mode==='hq'?'u2net_human_seg':'u2netp';
+   setBgStatus(mode==='hq'?'Loading high-quality AI model (first use can be large)…':'Loading fast AI model (~5 MB, first use only)…');
    const mod=await import('https://unpkg.com/@bunnio/rembg-web@1.0.2/dist/index.js');
-   let session=null;try{session=await mod.newSession('u2net_human_seg')}catch{}
-   removed=await mod.remove(file,{session,postProcessMask:true,onProgress:p=>{if(p?.progress!=null)setBgStatus(`Removing background ${Math.round(p.progress)}%`)}})
-   await paintBg();setBgStatus('Background removed. Choose a background preview.');return removed;
- }catch(e){console.error(e);setBgStatus('Background removal failed. Please retry or use the dedicated Background Remover.',true);throw e}
+   let session=null;
+   try{session=await mod.newSession(model)}catch(e){console.warn('Session preload failed; falling back to library defaults',e)}
+   const maskBlob=await mod.remove(small,{session,onlyMask:true,postProcessMask:true,onProgress:p=>{if(p?.progress!=null)setBgStatus(`Removing background ${Math.round(p.progress)}%`)}})
+   const maskImg=await load(maskBlob);
+   const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+   const x=c.getContext('2d');x.drawImage(img,0,0);x.globalCompositeOperation='destination-in';x.drawImage(maskImg,0,0,c.width,c.height);
+   removed=await new Promise(r=>c.toBlob(r,'image/png'));
+   removedImg=await load(removed);
+   await paintBg();setBgStatus(mode==='hq'?'High-quality background removed.':'Fast background removed.');return removed;
+ }catch(e){console.error(e);setBgStatus('Background removal failed. Try Fast mode or the dedicated Background Remover.',true);throw e}
 }
 async function paintBg(){
  const im=await load(removed); const make=async(c)=>{const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;const x=cv.getContext('2d');if(c){x.fillStyle=c;x.fillRect(0,0,cv.width,cv.height)}x.drawImage(im,0,0);return new Promise(r=>cv.toBlob(r,'image/png'))};
@@ -78,14 +96,28 @@ function cropSource(srcW,srcH,targetRatio){
  const sx=Math.max(0,Math.min(srcW-cw,cx-cw/2)),sy=Math.max(0,Math.min(srcH-ch,cy-ch/2));
  return [sx,sy,cw,ch];
 }
-function sourceFor(){return bg==='original'?img:removed}
+function sourceFor(){return bg==='original'?img:removedImg}
 function targetKB(){const v=$('#target').value;return v==='custom'?Math.max(0,+$('#targetCustom').value):+v}
 async function canvasBlob(cv,type,q){return new Promise(r=>cv.toBlob(r,type,q))}
 async function fitJpeg(cv,target){
- let lo=.05,hi=1,best=null;
- for(let i=0;i<12;i++){const q=(lo+hi)/2,b=await canvasBlob(cv,'image/jpeg',q);if(!b)break;if(b.size<=target){best=b;lo=q}else hi=q}
- if(!best)best=await canvasBlob(cv,'image/jpeg',lo);
- return best;
+ if(!target)return {blob:await canvasBlob(cv,'image/jpeg',.92),canvas:cv};
+ const limit=Math.max(1024,Math.round(target*1024));
+ let current=cv;
+ for(let pass=0;pass<10;pass++){
+   let lo=.05,hi=1,best=null;
+   for(let i=0;i<12;i++){
+     const q=(lo+hi)/2,b=await canvasBlob(current,'image/jpeg',q);
+     if(!b)break;
+     if(b.size<=limit){best={blob:b,quality:q,canvas:current};lo=q}else hi=q;
+   }
+   if(best)return best;
+   const next=document.createElement('canvas');
+   next.width=Math.max(40,Math.floor(current.width*.88));
+   next.height=Math.max(40,Math.floor(current.height*.88));
+   next.getContext('2d').drawImage(current,0,0,next.width,next.height);
+   current=next;
+ }
+ return {blob:await canvasBlob(current,'image/jpeg',.60),quality:.60,canvas:current};
 }
 async function render(){
  const src=sourceFor();if(!src)throw Error('Upload a photo first.');
@@ -94,9 +126,22 @@ async function render(){
  let [sx,sy,sw,sh]=cropSource(src.naturalWidth,src.naturalHeight,tw/th);
  if(bg!=='original'){x.fillStyle=bg==='transparent'?'#00000000':colors[bg];x.fillRect(0,0,tw,th)}
  x.save();x.filter=`brightness(${$('#brightness').value}%) contrast(${$('#contrast').value}%) saturate(${$('#saturation').value}%)`;x.drawImage(src,sx,sy,sw,sh,0,0,tw,th);x.restore();
+ const ot=$('#overlayText')?.value?.trim();
+ if(ot){
+   const barH=Math.max(Math.round(th*0.09),18),fontSize=Math.max(Math.round(barH*0.55),10);
+   const col=$('#overlayColor')?.value||'white';
+   x.save();
+   x.fillStyle=col==='white'?'rgba(0,0,0,.55)':'rgba(255,255,255,.72)';
+   x.fillRect(0,th-barH,tw,barH);
+   x.fillStyle=col==='white'?'#fff':'#111';
+   x.font=`600 ${fontSize}px Arial, sans-serif`;x.textAlign='center';x.textBaseline='middle';
+   x.fillText(ot,tw/2,th-barH/2,tw-10);
+   x.restore();
+ }
  const fmt=$('#format').value, kb=targetKB();
- let blob=fmt==='png'?await canvasBlob(cv,'image/png'):await fitJpeg(cv,kb?kb*1024:1e20);
- return {canvas:cv,blob,tw,th,d,kb};
+ if(fmt==='png' && kb) setStatus('PNG selected: target KB is not enforced losslessly; choose JPG for exact target KB.');
+ const packed=fmt==='png'?{blob:await canvasBlob(cv,'image/png'),canvas:cv}:{...await fitJpeg(cv,kb),};
+ return {canvas:packed.canvas||cv,blob:packed.blob,tw:packed.canvas?.width||tw,th:packed.canvas?.height||th,d,kb};
 }
 async function process(){
  if(!file)return setStatus('Upload a photo first.');
@@ -107,7 +152,7 @@ async function process(){
    const u=URL.createObjectURL(r.blob),ou=URL.createObjectURL(file);
    $('#single').innerHTML=`<div class="single-output"><div class="photo-preview"><img src="${u}" alt="Final passport photo"></div><div><h3>Single photo — ready</h3><div class="details">Output: ${r.tw} × ${r.th} px<br>Requested: ${$('#w').value} × ${$('#h').value} ${$('#unit').value}<br>DPI: ${r.d}<br>Final: ${fmt(r.blob.size)}${r.kb?' · Target '+r.kb+' KB':''}<br>Background: ${bg}</div><div class="actions"><a class="btn" href="${u}" download="formtools-passport-photo.jpg">Download Single JPG</a><button class="btn secondary" id="png" type="button">Download Single PNG</button></div></div></div>`;
    $('#png').onclick=async()=>{const b=await canvasBlob(r.canvas,'image/png');const v=URL.createObjectURL(b),a=document.createElement('a');a.href=v;a.download='formtools-passport-photo.png';a.click();setTimeout(()=>URL.revokeObjectURL(v),1000)};
-   buildCopies();$('#before').src=ou;$('#after').src=u;$('#beforeDetails').innerHTML=`${file.name}<br>${fmt(file.size)}<br>${img.naturalWidth} × ${img.naturalHeight} px`;$('#afterDetails').innerHTML=`${fmt(r.blob.size)}<br>${r.tw} × ${r.th} px<br>${$('#w').value} × ${$('#h').value} ${$('#unit').value}<br>${r.dpi} DPI`;
+   buildCopies();$('#before').src=ou;$('#after').src=u;$('#beforeDetails').innerHTML=`${file.name}<br>${fmt(file.size)}<br>${img.naturalWidth} × ${img.naturalHeight} px`;$('#afterDetails').innerHTML=`${fmt(r.blob.size)}<br>${r.tw} × ${r.th} px<br>${$('#w').value} × ${$('#h').value} ${$('#unit').value}<br>${r.d} DPI`;
    setStatus(`Done • ${fmt(r.blob.size)} output.`,true);
  }catch(e){console.error(e);setStatus('Could not create the result. Try another image or settings.')}
 }

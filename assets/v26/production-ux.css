@@ -1,0 +1,19 @@
+
+/* V26 production UX layer */
+.ft26-shell{max-width:1180px;margin:auto;padding:16px}
+.ft26-toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ft26-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:14px;box-shadow:0 4px 18px rgba(0,0,0,.05)}
+.ft26-card h3{margin:0 0 8px;font-size:15px}
+.ft26-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ft26-grid{display:grid;grid-template-columns:1.5fr .9fr;gap:14px}
+.ft26-preview{min-height:360px;display:grid;place-items:center;background:#f8fafc;border-radius:14px;overflow:hidden}
+.ft26-preview img{max-width:100%;max-height:520px;object-fit:contain}
+.ft26-chip{padding:8px 11px;border:1px solid #dbe2ea;border-radius:999px;background:#fff;cursor:pointer}
+.ft26-chip.active{outline:2px solid currentColor}
+.ft26-input{width:100%;padding:10px;border:1px solid #dbe2ea;border-radius:10px;box-sizing:border-box}
+.ft26-btn{padding:11px 14px;border:0;border-radius:10px;cursor:pointer;font-weight:700}
+.ft26-status{font-size:13px;color:#475569;min-height:20px}
+.ft26-spec{display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:13px}
+.ft26-spec span{color:#64748b}.ft26-spec b{text-align:right}
+.ft26-progress{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden}.ft26-progress>i{display:block;height:100%;width:0;transition:width .2s}
+@media(max-width:820px){.ft26-toolbar,.ft26-grid{grid-template-columns:1fr}.ft26-preview{min-height:260px}}

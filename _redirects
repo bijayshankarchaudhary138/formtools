@@ -1,0 +1,6 @@
+# 301 redirects — these pairs were byte-identical duplicate pages competing
+# for the same search keyword. Consolidating ranking signal into one URL.
+/compress-jpg-to-20kb/   /compress-image-to-20kb/   301
+/compress-jpg-to-50kb/   /compress-image-to-50kb/   301
+/compress-jpg-to-100kb/  /compress-image-to-100kb/  301
+/passport-size-photo-maker/  /passport-photo-maker/  301

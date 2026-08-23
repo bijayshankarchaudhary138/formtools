@@ -5,4 +5,42 @@
 <div class="ft-card"><h2>Important output notes</h2><p>Always review the downloaded result before submitting it to a website, government portal or application form. Requirements such as dimensions, DPI, file type and maximum file size can vary by the destination.</p></div>
 <div class="ft-faq"><h2>Frequently Asked Questions</h2><details><summary>Is the tool free?</summary><p>Yes, this FormTools tool is provided without a paid subscription requirement.</p></details><details><summary>Do I need to install software?</summary><p>No. The tool is designed to run in a modern web browser.</p></details><details><summary>Should I verify important output?</summary><p>Yes. Especially for government applications, documents and exact file-size requirements, verify the final file before submission.</p></details></div>
 <div class="ft-card"><h2>Related tools</h2><div class="ft-related"><a href="/compress-image-to-20kb/">Compress Image To 20Kb</a><a href="/image-dpi-resizer/">Image Dpi Resizer</a><a href="/crop-image-manual/">Crop Image Manual</a><a href="/rotate-flip-image/">Rotate Flip Image</a><a href="/image-before-after/">Image Before After</a><a href="/image-file-details/">Image File Details</a></div></div>
-</section></main><script>const $=s=>document.querySelector(s);$("#file").onchange=async e=>$("#svg").value=await e.target.files[0].text();$("#go").onclick=()=>{const s=$("#svg").value;if(!s.trim())return;const u=URL.createObjectURL(new Blob([s],{type:"image/svg+xml"})),im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=+$("#w").value;c.height=+$("#h").value;c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="converted.png";a.click()},"image/png");URL.revokeObjectURL(u)};im.src=u};</script></body></html>
+</section></main><script>const $=s=>document.querySelector(s);$("#file").onchange=async e=>$("#svg").value=await e.target.files[0].text();$("#go").onclick=()=>{const s=$("#svg").value;if(!s.trim())return;const u=URL.createObjectURL(new Blob([s],{type:"image/svg+xml"})),im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=+$("#w").value;c.height=+$("#h").value;c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="converted.png";a.click()},"image/png");URL.revokeObjectURL(u)};im.src=u};</script>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>

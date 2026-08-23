@@ -17,4 +17,42 @@
 <div class="ft-card"><h2>Related tools</h2><div class="ft-related"><a href="/pdf-compressor/">Pdf Compressor</a><a href="/compress-pdf-to-50kb/">Compress Pdf To 50Kb</a><a href="/compress-pdf-to-100kb/">Compress Pdf To 100Kb</a><a href="/pdf-to-word/">Pdf To Word</a><a href="/word-to-pdf/">Word To Pdf</a><a href="/ocr-pdf/">Ocr Pdf</a></div></div>
 </section></main>
 <footer class="footer"><div class="container"><a href="/privacy-policy/">Privacy</a> · <a href="/contact/">Contact</a> · <a href="/about/">About</a></div></footer>
-<script>const $=s=>document.querySelector(s);function img(f){return new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=URL.createObjectURL(f)})}$("#go").onclick=async()=>{const pf=$("#photo").files[0],sf=$("#sig").files[0];if(!pf||!sf)return;const p=await img(pf),s=await img(sf),pw=+$("#pw").value,ph=+$("#ph").value,sw=+$("#sw").value,sh=+$("#sh").value,c=document.createElement("canvas");c.width=Math.max(pw,sw);c.height=ph+sh+30;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(p,0,0,pw,ph);x.drawImage(s,0,ph+20,sw,sh);c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="photo-signature-combined.jpg";a.click();$("#status").textContent="Combined image ready."},"image/jpeg",.95)};</script></body></html>
+<script>const $=s=>document.querySelector(s);function img(f){return new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=URL.createObjectURL(f)})}$("#go").onclick=async()=>{const pf=$("#photo").files[0],sf=$("#sig").files[0];if(!pf||!sf)return;const p=await img(pf),s=await img(sf),pw=+$("#pw").value,ph=+$("#ph").value,sw=+$("#sw").value,sh=+$("#sh").value,c=document.createElement("canvas");c.width=Math.max(pw,sw);c.height=ph+sh+30;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(p,0,0,pw,ph);x.drawImage(s,0,ph+20,sw,sh);c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="photo-signature-combined.jpg";a.click();$("#status").textContent="Combined image ready."},"image/jpeg",.95)};</script>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>

@@ -5,4 +5,42 @@
 <div class="ft-card"><h2>Important output notes</h2><p>Always review the downloaded result before submitting it to a website, government portal or application form. Requirements such as dimensions, DPI, file type and maximum file size can vary by the destination.</p></div>
 <div class="ft-faq"><h2>Frequently Asked Questions</h2><details><summary>Are all PDFs identical?</summary><p>No. PDFs can contain text, scans, images, fonts, forms and complex layouts, so conversion fidelity can vary.</p></details><details><summary>Should I check the output?</summary><p>Yes. Always open the downloaded file and verify important text, pages and formatting.</p></details><details><summary>Are files private?</summary><p>Tools that run locally in the browser do not need to upload the file to a server; check each tool&#x27;s privacy note for its actual processing method.</p></details></div>
 <div class="ft-card"><h2>Related tools</h2><div class="ft-related"><a href="/pdf-compressor/">Pdf Compressor</a><a href="/compress-pdf-to-50kb/">Compress Pdf To 50Kb</a><a href="/compress-pdf-to-100kb/">Compress Pdf To 100Kb</a><a href="/pdf-to-word/">Pdf To Word</a><a href="/word-to-pdf/">Word To Pdf</a><a href="/ocr-pdf/">Ocr Pdf</a></div></div>
-</section></main><script>const $=s=>document.querySelector(s);let fs=[];$("#files").onchange=e=>{fs=[...e.target.files];render()};function render(){const l=$("#list");l.innerHTML="";fs.forEach((f,i)=>{const d=document.createElement("div");d.style="display:flex;gap:8px;margin:6px 0";d.innerHTML=`<span>${i+1}. ${f.name}</span><button data-i="${i}" data-d="-1">↑</button><button data-i="${i}" data-d="1">↓</button>`;l.appendChild(d)});l.querySelectorAll("button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,j=i+ +b.dataset.d;if(j>=0&&j<fs.length){[fs[i],fs[j]]=[fs[j],fs[i]];render()}})}$("#go").onclick=async()=>{const out=await PDFLib.PDFDocument.create();for(const f of fs){const d=await PDFLib.PDFDocument.load(await f.arrayBuffer());const ps=await out.copyPages(d,d.getPageIndices());ps.forEach(p=>out.addPage(p))}const b=await out.save(),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([b],{type:"application/pdf"}));a.download="merged-ordered.pdf";a.click()};</script></body></html>
+</section></main><script>const $=s=>document.querySelector(s);let fs=[];$("#files").onchange=e=>{fs=[...e.target.files];render()};function render(){const l=$("#list");l.innerHTML="";fs.forEach((f,i)=>{const d=document.createElement("div");d.style="display:flex;gap:8px;margin:6px 0";d.innerHTML=`<span>${i+1}. ${f.name}</span><button data-i="${i}" data-d="-1">↑</button><button data-i="${i}" data-d="1">↓</button>`;l.appendChild(d)});l.querySelectorAll("button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,j=i+ +b.dataset.d;if(j>=0&&j<fs.length){[fs[i],fs[j]]=[fs[j],fs[i]];render()}})}$("#go").onclick=async()=>{const out=await PDFLib.PDFDocument.create();for(const f of fs){const d=await PDFLib.PDFDocument.load(await f.arrayBuffer());const ps=await out.copyPages(d,d.getPageIndices());ps.forEach(p=>out.addPage(p))}const b=await out.save(),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([b],{type:"application/pdf"}));a.download="merged-ordered.pdf";a.click()};</script>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>

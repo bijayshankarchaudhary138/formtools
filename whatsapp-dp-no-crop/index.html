@@ -1,1 +1,39 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WhatsApp DP Without Crop | FormTools</title><meta name="description" content="Zoom out and fit the complete image inside a square WhatsApp DP."><link rel="canonical" href="https://formtools.in/whatsapp-dp-no-crop/"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/production.css"><link rel="stylesheet" href="/assets/seo-content.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "WhatsApp DP Without Crop", "url": "https://formtools.in/whatsapp-dp-no-crop/", "description": "Zoom out and fit the complete image inside a square WhatsApp DP.", "applicationCategory": "UtilitiesApplication", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script></head><body><main><section class="container"><nav><a href="/">Home</a> / <a href="/all-tools/">All Tools</a></nav><h1>WhatsApp DP Without Crop</h1><p>Zoom out and fit the complete image inside a square WhatsApp DP.</p><div class="ft-card"><p><a class="btn" href="/social-media-dp-maker/">Open Image Editor</a> <a class="btn" href="/image-compression-sizes/">Open Image Compressor</a></p></div><section class="ft-seo"><h2>How to use</h2><ol><li>Upload or select your image.</li><li>Choose the required settings.</li><li>Preview the result.</li><li>Download and verify the final file.</li></ol><h2>Related tools</h2><div class="ft-related"><a href="/social-media-dp-maker/">Social Media DP Maker</a><a href="/square-image-cropper/">Square Cropper</a><a href="/zoom-out-image-no-crop/">Zoom Out Without Crop</a><a href="/resize-image-in-pixels/">Pixel Resizer</a></div></section></section></main></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WhatsApp DP Without Crop | FormTools</title><meta name="description" content="Zoom out and fit the complete image inside a square WhatsApp DP."><link rel="canonical" href="https://formtools.in/whatsapp-dp-no-crop/"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/production.css"><link rel="stylesheet" href="/assets/seo-content.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "WhatsApp DP Without Crop", "url": "https://formtools.in/whatsapp-dp-no-crop/", "description": "Zoom out and fit the complete image inside a square WhatsApp DP.", "applicationCategory": "UtilitiesApplication", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script></head><body><main><section class="container"><nav><a href="/">Home</a> / <a href="/all-tools/">All Tools</a></nav><h1>WhatsApp DP Without Crop</h1><p>Zoom out and fit the complete image inside a square WhatsApp DP.</p><div class="ft-card"><p><a class="btn" href="/social-media-dp-maker/">Open Image Editor</a> <a class="btn" href="/image-compression-sizes/">Open Image Compressor</a></p></div><section class="ft-seo"><h2>How to use</h2><ol><li>Upload or select your image.</li><li>Choose the required settings.</li><li>Preview the result.</li><li>Download and verify the final file.</li></ol><h2>Related tools</h2><div class="ft-related"><a href="/social-media-dp-maker/">Social Media DP Maker</a><a href="/square-image-cropper/">Square Cropper</a><a href="/zoom-out-image-no-crop/">Zoom Out Without Crop</a><a href="/resize-image-in-pixels/">Pixel Resizer</a></div></section></section></main>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>

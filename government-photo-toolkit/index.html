@@ -10,4 +10,42 @@
 <div class="ft-card"><h2>Important output notes</h2><p>Always review the downloaded result before submitting it to a website, government portal or application form. Requirements such as dimensions, DPI, file type and maximum file size can vary by the destination.</p></div>
 <div class="ft-faq"><h2>Frequently Asked Questions</h2><details><summary>Are application requirements always the same?</summary><p>No. Requirements can change by recruitment, portal and notification. Always compare the tool settings with the latest official application instructions.</p></details><details><summary>Can I enter custom dimensions?</summary><p>Yes, the toolkit supports custom pixel dimensions.</p></details><details><summary>Can I target a file size?</summary><p>Yes, for formats and workflows that support quality-based size reduction; the final byte size can vary slightly.</p></details></div>
 <div class="ft-card"><h2>Related tools</h2><div class="ft-related"><a href="/government-signature-toolkit/">Government Signature Toolkit</a><a href="/government-print-sheet/">Government Print Sheet</a><a href="/signature-resizer/">Signature Resizer</a></div></div>
-</section></main><script>const $=s=>document.querySelector(s);let files=[];$("#drop").onclick=()=>$("#files").click();$("#files").onchange=e=>files=[...e.target.files];$("#preset").onchange=()=>{const v=$("#preset").value;if(v!=="custom"){const [w,h]=v.split("x").map(Number);$("#w").value=w;$("#h").value=h}};$("#go").onclick=async()=>{if(!files.length)return;let preset=$("#preset").value;if(preset!=="custom"){let [w,h]=preset.split("x").map(Number);$("#w").value=w;$("#h").value=h}for(const f of files){const im=await new Promise(r=>{let i=new Image();i.onload=()=>r(i);i.src=URL.createObjectURL(f)}),w=+$("#w").value,h=+$("#h").value,c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle=$("#bg").value;x.fillRect(0,0,w,h);const sc=Math.max(w/im.naturalWidth,h/im.naturalHeight),nw=im.naturalWidth*sc,nh=im.naturalHeight*sc;x.drawImage(im,(w-nw)/2,(h-nh)/2,nw,nh);if($("#name").value||$("#date").value){x.fillStyle="#000";x.font=`${Math.max(10,Math.round(w/30))}px Arial`;x.textAlign="center";x.fillText([$("#name").value,$("#date").value].filter(Boolean).join(" "),w/2,h-8)}let blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.9));const target=+$("#kb").value*1024;let q=.9;for(let i=0;i<8&&blob.size>target;i++){q*=.82;blob=await new Promise(r=>c.toBlob(r,"image/jpeg",q))}const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=f.name.replace(/\.[^.]+$/,"")+"-application-photo.jpg";a.click()}$("#status").textContent=`Processed ${files.length} photo(s).`};</script></body></html>
+</section></main><script>const $=s=>document.querySelector(s);let files=[];$("#drop").onclick=()=>$("#files").click();$("#files").onchange=e=>files=[...e.target.files];$("#preset").onchange=()=>{const v=$("#preset").value;if(v!=="custom"){const [w,h]=v.split("x").map(Number);$("#w").value=w;$("#h").value=h}};$("#go").onclick=async()=>{if(!files.length)return;let preset=$("#preset").value;if(preset!=="custom"){let [w,h]=preset.split("x").map(Number);$("#w").value=w;$("#h").value=h}for(const f of files){const im=await new Promise(r=>{let i=new Image();i.onload=()=>r(i);i.src=URL.createObjectURL(f)}),w=+$("#w").value,h=+$("#h").value,c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle=$("#bg").value;x.fillRect(0,0,w,h);const sc=Math.max(w/im.naturalWidth,h/im.naturalHeight),nw=im.naturalWidth*sc,nh=im.naturalHeight*sc;x.drawImage(im,(w-nw)/2,(h-nh)/2,nw,nh);if($("#name").value||$("#date").value){x.fillStyle="#000";x.font=`${Math.max(10,Math.round(w/30))}px Arial`;x.textAlign="center";x.fillText([$("#name").value,$("#date").value].filter(Boolean).join(" "),w/2,h-8)}let blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.9));const target=+$("#kb").value*1024;let q=.9;for(let i=0;i<8&&blob.size>target;i++){q*=.82;blob=await new Promise(r=>c.toBlob(r,"image/jpeg",q))}const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=f.name.replace(/\.[^.]+$/,"")+"-application-photo.jpg";a.click()}$("#status").textContent=`Processed ${files.length} photo(s).`};</script>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>

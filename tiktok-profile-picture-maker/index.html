@@ -31,4 +31,42 @@ c.onpointerdown=e=>{if(!im)return;state.drag=true;const r=c.getBoundingClientRec
 c.onpointermove=e=>{if(!state.drag)return;const r=c.getBoundingClientRect(),nx=e.clientX-r.left,ny=e.clientY-r.top;state.x+=nx-state.sx;state.y+=ny-state.sy;state.sx=nx;state.sy=ny;render()};c.onpointerup=()=>state.drag=false;c.onpointercancel=()=>state.drag=false;
 c.onwheel=e=>{e.preventDefault();state.scale*=e.deltaY<0?1.06:.94;render()};$("#zoomIn").onclick=()=>{state.scale*=1.12;render()};$("#zoomOut").onclick=()=>{state.scale*=.89;render()};$("#fit").onclick=()=>{if(im){state.scale=Math.max(W/im.naturalWidth,H/im.naturalHeight);state.x=W/2;state.y=H/2;render()}};$("#center").onclick=()=>{state.x=W/2;state.y=H/2;render()};$("#rotate").onclick=()=>{state.angle+=Math.PI/2;render()};$("#reset").onclick=()=>{if(im){state.scale=Math.max(W/im.naturalWidth,H/im.naturalHeight);state.x=W/2;state.y=H/2;state.angle=0;$("#bg").value="original";render()}};
 async function makeBlob(canvas,type,q,target){let quality=q,b=await new Promise(r=>canvas.toBlob(r,type,quality));if(target>0&&type!=="image/png"){for(let i=0;i<12&&b.size>target;i++){quality=Math.max(.08,quality*.82);b=await new Promise(r=>canvas.toBlob(r,type,quality))}}return b}
-$("#download").onclick=async()=>{if(!im)return;const type="image/"+$("#out").value.replace("jpg","jpeg"),target=(+$("#kb").value||0)*1024,b=await makeBlob(fin,type,+$("#quality").value/100,target),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`${$("#platform").value}-profile-picture.${$("#out").value}`;a.click();$("#details").textContent+=` · Final ${(b.size/1024).toFixed(1)} KB`};render();</script></body></html>
+$("#download").onclick=async()=>{if(!im)return;const type="image/"+$("#out").value.replace("jpg","jpeg"),target=(+$("#kb").value||0)*1024,b=await makeBlob(fin,type,+$("#quality").value/100,target),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`${$("#platform").value}-profile-picture.${$("#out").value}`;a.click();$("#details").textContent+=` · Final ${(b.size/1024).toFixed(1)} KB`};render();</script>
+<style>
+.ft-smart-panel{margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ft-spec-title{font-weight:700;margin-bottom:10px}.ft-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}.ft-spec-grid span{color:#64748b}.ft-spec-grid b{text-align:right}
+@media(max-width:700px){.ft-smart-panel{padding:12px;border-radius:12px}.ft-spec-grid{font-size:13px}}
+</style>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function text(v){return v==null?"":String(v);}
+function ensure(id,html,after){
+  if(document.getElementById(id)) return document.getElementById(id);
+  const n=document.createElement("section"); n.id=id; n.className="ft-smart-panel"; n.innerHTML=html;
+  (after?after.parentElement:document.querySelector("main")||document.body).appendChild(n); return n;
+}
+function sync(){
+  const kb=$("#targetKB")||$("#target-kb")||$('input[name*="kb" i]');
+  const dpi=$("#dpi")||$('select[name*="dpi" i]')||$('input[name*="dpi" i]');
+  const unit=$("#unit")||$('select[name*="unit" i]');
+  const w=$("#width")||$('input[name*="width" i]');
+  const h=$("#height")||$('input[name*="height" i]');
+  const btn=$("[data-compress]")||$(".compress-btn")||$('button[id*="compress" i]');
+  if(btn&&kb){btn.textContent="Compress to "+(kb.value||kb.textContent||"Target")+" KB";}
+  const spec=$("#ft-live-spec")||ensure("ft-live-spec",
+    '<div class="ft-spec-title">Live Photo Specifications</div><div class="ft-spec-grid"><span>Width</span><b data-s="w">—</b><span>Height</span><b data-s="h">—</b><span>Unit</span><b data-s="unit">—</b><span>DPI</span><b data-s="dpi">—</b><span>Target</span><b data-s="kb">—</b></div>');
+  if(spec){
+    $('[data-s="w"]',spec).textContent=w?.value||"—";
+    $('[data-s="h"]',spec).textContent=h?.value||"—";
+    $('[data-s="unit"]',spec).textContent=unit?.value||"—";
+    $('[data-s="dpi"]',spec).textContent=dpi?.value||"—";
+    $('[data-s="kb"]',spec).textContent=kb?.value?kb.value+" KB":"—";
+  }
+}
+document.addEventListener("input",sync); document.addEventListener("change",sync); window.addEventListener("load",sync); sync();
+})();
+</script>
+</body></html>
